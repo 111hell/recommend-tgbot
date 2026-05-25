@@ -4,7 +4,7 @@
 
 **Goal:** Build a Go CLI that recommends high-quality GitHub projects daily and sends the result to a Telegram private chat through GitHub Actions.
 
-**Architecture:** The CLI loads public settings from `config.yaml` and secrets from environment variables, queries GitHub for category-specific candidate repositories, scores and de-duplicates them, formats a Chinese recommendation message, sends it via Telegram, and writes public recommendation history to `data/recommendations.json`. GitHub Actions runs the CLI daily at 13:00 Asia/Shanghai and commits history updates after successful sends.
+**Architecture:** The CLI loads public settings from `config.yaml` and secrets from environment variables, queries GitHub for category-specific candidate repositories, scores and de-duplicates them, formats a Chinese recommendation message, sends it via Telegram, and writes public recommendation history to `data/recommendations.json`. GitHub Actions runs the CLI daily at 05:00 Asia/Shanghai and commits history updates after successful sends.
 
 **Tech Stack:** Go 1.22, standard `net/http`, `encoding/json`, `gopkg.in/yaml.v3`, GitHub REST Search API, Telegram Bot API, GitHub Actions.
 
@@ -71,7 +71,7 @@
 ## Task 5: CLI and Workflow
 
 - [ ] Implement `cmd/recommend/main.go` to load config/env, fetch candidates, rank recommendations, send Telegram, and save history.
-- [ ] Add `.github/workflows/daily.yml` with UTC cron `0 5 * * *`, `workflow_dispatch`, Go setup, tests, CLI execution, and history commit.
+- [ ] Add `.github/workflows/daily.yml` with UTC cron `0 21 * * *`, `workflow_dispatch`, Go setup, tests, CLI execution, and history commit.
 - [ ] Add `README.md` with GitHub Secrets and Telegram chat id setup instructions.
 - [ ] Run `go test ./...`.
 - [ ] Run `go run ./cmd/recommend -dry-run` to verify local formatting without secrets.

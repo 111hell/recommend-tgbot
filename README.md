@@ -6,10 +6,10 @@ The bot prefers Go projects, but it can also recommend high-quality AI/agent and
 
 ## How It Runs
 
-GitHub Actions runs the Go CLI every day at 13:00 Asia/Shanghai. The workflow uses UTC cron:
+GitHub Actions runs the Go CLI every day at 05:00 Asia/Shanghai. The workflow uses UTC cron:
 
 ```yaml
-cron: "0 5 * * *"
+cron: "0 21 * * *"
 ```
 
 Manual runs are available from the GitHub Actions UI through `workflow_dispatch`.

@@ -10,10 +10,10 @@ The bot should prefer Go projects, but it should not be limited to Go. It should
 
 The bot will be implemented as a Go CLI and run from GitHub Actions.
 
-The scheduled workflow will run every day at 13:00 Asia/Shanghai. To avoid relying on timezone-specific workflow syntax, the workflow should use UTC cron:
+The scheduled workflow will run every day at 05:00 Asia/Shanghai. To avoid relying on timezone-specific workflow syntax, the workflow should use UTC cron:
 
 ```yaml
-cron: "0 5 * * *"
+cron: "0 21 * * *"
 ```
 
 The workflow should also support `workflow_dispatch` so recommendations can be tested manually from the GitHub Actions UI.
