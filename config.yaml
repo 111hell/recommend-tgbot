@@ -1,0 +1,11 @@
+recommend:
+  count: 5
+  min_stars: 500
+  lookback_days: 30
+  exclude_repos: []
+  categories:
+    - go
+    - ai_agent
+    - devops_infra
+telegram:
+  parse_mode: Markdown
