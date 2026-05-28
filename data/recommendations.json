@@ -65,6 +65,14 @@
       "categories": [
         "ai_agent"
       ]
+    },
+    {
+      "full_name": "huggingface/transformers",
+      "recommended_at": "2026-05-28",
+      "score": 834.2172790931227,
+      "categories": [
+        "ai_agent"
+      ]
     }
   ]
 }
