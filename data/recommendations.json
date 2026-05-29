@@ -73,6 +73,14 @@
       "categories": [
         "ai_agent"
       ]
+    },
+    {
+      "full_name": "golang/go",
+      "recommended_at": "2026-05-29",
+      "score": 832.6244769936208,
+      "categories": [
+        "go"
+      ]
     }
   ]
 }
