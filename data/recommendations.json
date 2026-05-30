@@ -81,6 +81,14 @@
       "categories": [
         "go"
       ]
+    },
+    {
+      "full_name": "f/prompts.chat",
+      "recommended_at": "2026-05-30",
+      "score": 830.888858169259,
+      "categories": [
+        "ai_agent"
+      ]
     }
   ]
 }
