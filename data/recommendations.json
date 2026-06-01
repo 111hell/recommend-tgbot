@@ -97,6 +97,14 @@
       "categories": [
         "ai_agent"
       ]
+    },
+    {
+      "full_name": "langchain-ai/langchain",
+      "recommended_at": "2026-06-01",
+      "score": 823.6706577104303,
+      "categories": [
+        "ai_agent"
+      ]
     }
   ]
 }
