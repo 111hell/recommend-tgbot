@@ -113,6 +113,15 @@
       "categories": [
         "ai_agent"
       ]
+    },
+    {
+      "full_name": "prometheus/prometheus",
+      "recommended_at": "2026-06-03",
+      "score": 822.2797906336418,
+      "categories": [
+        "go",
+        "devops_infra"
+      ]
     }
   ]
 }
