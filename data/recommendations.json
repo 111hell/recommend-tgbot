@@ -122,6 +122,14 @@
         "go",
         "devops_infra"
       ]
+    },
+    {
+      "full_name": "langflow-ai/langflow",
+      "recommended_at": "2026-06-04",
+      "score": 821.3879547627926,
+      "categories": [
+        "ai_agent"
+      ]
     }
   ]
 }
