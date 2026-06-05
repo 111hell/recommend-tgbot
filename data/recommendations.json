@@ -130,6 +130,15 @@
       "categories": [
         "ai_agent"
       ]
+    },
+    {
+      "full_name": "traefik/traefik",
+      "recommended_at": "2026-06-05",
+      "score": 816.9915115044852,
+      "categories": [
+        "go",
+        "devops_infra"
+      ]
     }
   ]
 }
