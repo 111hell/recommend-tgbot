@@ -139,6 +139,15 @@
         "go",
         "devops_infra"
       ]
+    },
+    {
+      "full_name": "etcd-io/etcd",
+      "recommended_at": "2026-06-06",
+      "score": 816.8867050911947,
+      "categories": [
+        "go",
+        "devops_infra"
+      ]
     }
   ]
 }
