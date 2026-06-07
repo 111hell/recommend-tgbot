@@ -148,6 +148,15 @@
         "go",
         "devops_infra"
       ]
+    },
+    {
+      "full_name": "rclone/rclone",
+      "recommended_at": "2026-06-07",
+      "score": 816.0005501474029,
+      "categories": [
+        "go",
+        "ai_agent"
+      ]
     }
   ]
 }
