@@ -9,11 +9,14 @@ import (
 
 	"recommend-bot/internal/config"
 	gh "recommend-bot/internal/github"
+	"recommend-bot/internal/learning"
+	"recommend-bot/internal/obsidian"
 	"recommend-bot/internal/recommend"
 	"recommend-bot/internal/telegram"
 )
 
 const historyPath = "data/recommendations.json"
+const learningStatePath = "data/learning_state.json"
 
 func main() {
 	if err := run(); err != nil {
@@ -25,6 +28,7 @@ func main() {
 func run() error {
 	configPath := flag.String("config", "config.yaml", "path to config yaml")
 	dryRun := flag.Bool("dry-run", false, "print message without sending to Telegram or saving history")
+	obsidianMode := flag.Bool("obsidian", false, "write a two-day learning route to Obsidian")
 	flag.Parse()
 
 	cfg, err := config.Load(*configPath)
@@ -62,6 +66,10 @@ func run() error {
 		Now:          time.Now().UTC(),
 	})
 
+	if *obsidianMode {
+		return runObsidianMode(cfg, env, recommendations, history, *dryRun)
+	}
+
 	message := recommend.FormatMessage(recommendations)
 	if *dryRun {
 		fmt.Print(message)
@@ -80,6 +88,141 @@ func run() error {
 
 	fmt.Printf("sent %d recommendations\n", len(recommendations))
 	return nil
+}
+
+func runObsidianMode(cfg config.Config, env config.Env, recommendations []recommend.Recommendation, history recommend.History, dryRun bool) error {
+	now := nowInShanghai()
+	state, err := learning.LoadState(learningStatePath)
+	if err != nil {
+		return err
+	}
+
+	if !state.NeedsNewProject(now) {
+		route := state.Active
+		day := state.CurrentRouteDay(now)
+		plan := learning.Plan{
+			FullName:  route.FullName,
+			Slug:      route.Slug,
+			GitHubURL: "https://github.com/" + route.FullName,
+		}
+		result := obsidian.WriteResult{
+			RelativePath: route.ObsidianPath,
+			DeepLink:     obsidian.DeepLink(filepathBase(cfg.Obsidian.VaultPath), route.ObsidianPath),
+		}
+		message := buildLearningReminder(plan, result, day)
+		if dryRun {
+			fmt.Print(message)
+			return nil
+		}
+		telegramClient := telegram.NewClient(env.TelegramBotToken)
+		return telegramClient.SendMessageWithOptions(context.Background(), env.TelegramChatID, message, telegram.SendOptions{
+			ParseMode: cfg.Telegram.ParseMode,
+			Buttons:   reminderButtons(plan, result),
+		})
+	}
+
+	if len(recommendations) == 0 {
+		message := "今天没有找到符合条件的 GitHub 学习项目。"
+		if dryRun {
+			fmt.Print(message)
+			return nil
+		}
+		telegramClient := telegram.NewClient(env.TelegramBotToken)
+		return telegramClient.SendMessage(context.Background(), env.TelegramChatID, message, cfg.Telegram.ParseMode)
+	}
+
+	plan := learning.BuildTemplatePlan(recommendations[0])
+	writer := obsidian.Writer{VaultPath: cfg.Obsidian.VaultPath, ProjectDir: cfg.Obsidian.ProjectDir}
+	var result obsidian.WriteResult
+	if dryRun {
+		relativePath := cfg.Obsidian.ProjectDir + "/" + plan.Slug + "/" + plan.Slug + ".md"
+		result = obsidian.WriteResult{
+			RelativePath: relativePath,
+			DeepLink:     obsidian.DeepLink(filepathBase(cfg.Obsidian.VaultPath), relativePath),
+		}
+		fmt.Print(obsidian.RenderMarkdown(plan))
+		fmt.Print("\n--- Telegram Reminder ---\n")
+		fmt.Print(buildLearningReminder(plan, result, 1))
+		return nil
+	}
+
+	result, err = writer.WritePlan(plan)
+	if err != nil {
+		return err
+	}
+	state.Active = &learning.Route{
+		FullName:     plan.FullName,
+		Slug:         plan.Slug,
+		ObsidianPath: result.RelativePath,
+		GeneratedAt:  now.Format("2006-01-02"),
+		CurrentDay:   1,
+		Day1Due:      now.Format("2006-01-02"),
+		Day2Due:      now.AddDate(0, 0, 1).Format("2006-01-02"),
+		Status:       learning.StatusActive,
+	}
+	if err := learning.SaveState(learningStatePath, state); err != nil {
+		return err
+	}
+	history.Add(recommendations[:1], now)
+	if err := recommend.SaveHistory(historyPath, history); err != nil {
+		return err
+	}
+
+	message := buildLearningReminder(plan, result, 1)
+	telegramClient := telegram.NewClient(env.TelegramBotToken)
+	return telegramClient.SendMessageWithOptions(context.Background(), env.TelegramChatID, message, telegram.SendOptions{
+		ParseMode: cfg.Telegram.ParseMode,
+		Buttons:   reminderButtons(plan, result),
+	})
+}
+
+func nowInShanghai() time.Time {
+	location, err := time.LoadLocation("Asia/Shanghai")
+	if err != nil {
+		return time.Now().UTC()
+	}
+	return time.Now().In(location)
+}
+
+func buildLearningReminder(plan learning.Plan, result obsidian.WriteResult, day int) string {
+	if day <= 0 {
+		day = 1
+	}
+	return fmt.Sprintf("今日学习项目：%s\n\n路线已写入 Obsidian：\n%s\n\n打开 Obsidian：\n%s\n\nGitHub：\n%s\n\n今天完成 Day %d。\n",
+		plan.FullName,
+		result.RelativePath,
+		result.DeepLink,
+		plan.GitHubURL,
+		day,
+	)
+}
+
+func reminderButtons(plan learning.Plan, result obsidian.WriteResult) []telegram.Button {
+	buttons := []telegram.Button{}
+	if result.DeepLink != "" {
+		buttons = append(buttons, telegram.Button{Text: "打开 Obsidian", URL: result.DeepLink})
+	}
+	if plan.GitHubURL != "" {
+		buttons = append(buttons, telegram.Button{Text: "打开 GitHub", URL: plan.GitHubURL})
+	}
+	return buttons
+}
+
+func filepathBase(path string) string {
+	for len(path) > 1 && path[len(path)-1] == '/' {
+		path = path[:len(path)-1]
+	}
+	idx := -1
+	for i := len(path) - 1; i >= 0; i-- {
+		if path[i] == '/' {
+			idx = i
+			break
+		}
+	}
+	if idx >= 0 {
+		return path[idx+1:]
+	}
+	return path
 }
 
 func sampleCandidates() []recommend.Repository {

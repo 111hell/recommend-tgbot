@@ -9,3 +9,14 @@ recommend:
     - devops_infra
 telegram:
   parse_mode: Markdown
+obsidian:
+  vault_path: "/Users/janeshirley/Documents/Obsidian Vault"
+  project_dir: "GitHub Projects"
+analysis:
+  provider: template
+  schedule_time: "11:00"
+llm:
+  provider: openai_compatible
+  base_url: ""
+  model: ""
+  api_key_env: LLM_API_KEY

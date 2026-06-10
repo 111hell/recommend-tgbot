@@ -16,6 +16,16 @@ type Client struct {
 	httpClient *http.Client
 }
 
+type SendOptions struct {
+	ParseMode string
+	Buttons   []Button
+}
+
+type Button struct {
+	Text string
+	URL  string
+}
+
 func NewClient(token string) *Client {
 	return &Client{
 		token:   strings.TrimSpace(token),
@@ -27,16 +37,34 @@ func NewClient(token string) *Client {
 }
 
 func (c *Client) SendMessage(ctx context.Context, chatID string, text string, parseMode string) error {
+	return c.SendMessageWithOptions(ctx, chatID, text, SendOptions{ParseMode: parseMode})
+}
+
+func (c *Client) SendMessageWithOptions(ctx context.Context, chatID string, text string, options SendOptions) error {
 	if c.token == "" {
 		return fmt.Errorf("telegram token is required")
 	}
 	payload := sendMessageRequest{
 		ChatID:    strings.TrimSpace(chatID),
 		Text:      text,
-		ParseMode: strings.TrimSpace(parseMode),
+		ParseMode: strings.TrimSpace(options.ParseMode),
 	}
 	if payload.ChatID == "" {
 		return fmt.Errorf("telegram chat id is required")
+	}
+	if len(options.Buttons) > 0 {
+		row := make([]inlineKeyboardButton, 0, len(options.Buttons))
+		for _, button := range options.Buttons {
+			text := strings.TrimSpace(button.Text)
+			url := strings.TrimSpace(button.URL)
+			if text == "" || url == "" {
+				continue
+			}
+			row = append(row, inlineKeyboardButton{Text: text, URL: url})
+		}
+		if len(row) > 0 {
+			payload.ReplyMarkup = &inlineKeyboardMarkup{InlineKeyboard: [][]inlineKeyboardButton{row}}
+		}
 	}
 
 	body, err := json.Marshal(payload)
@@ -63,7 +91,17 @@ func (c *Client) SendMessage(ctx context.Context, chatID string, text string, pa
 }
 
 type sendMessageRequest struct {
-	ChatID    string `json:"chat_id"`
-	Text      string `json:"text"`
-	ParseMode string `json:"parse_mode,omitempty"`
+	ChatID      string                `json:"chat_id"`
+	Text        string                `json:"text"`
+	ParseMode   string                `json:"parse_mode,omitempty"`
+	ReplyMarkup *inlineKeyboardMarkup `json:"reply_markup,omitempty"`
+}
+
+type inlineKeyboardMarkup struct {
+	InlineKeyboard [][]inlineKeyboardButton `json:"inline_keyboard"`
+}
+
+type inlineKeyboardButton struct {
+	Text string `json:"text"`
+	URL  string `json:"url"`
 }

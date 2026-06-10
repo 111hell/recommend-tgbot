@@ -6,13 +6,51 @@ The bot prefers Go projects, but it can also recommend high-quality AI/agent and
 
 ## How It Runs
 
-GitHub Actions runs the Go CLI every day at 05:00 Asia/Shanghai. The workflow uses UTC cron:
+GitHub Actions runs the Go CLI every day at 11:00 Asia/Shanghai for the Telegram-only recommendation flow. The workflow uses UTC cron:
 
 ```yaml
-cron: "0 21 * * *"
+cron: "0 3 * * *"
 ```
 
 Manual runs are available from the GitHub Actions UI through `workflow_dispatch`.
+
+## Obsidian Learning Route Mode
+
+The bot can also generate a two-day learning route for one project and write it to Obsidian:
+
+```bash
+GITHUB_TOKEN=your_github_token \
+TELEGRAM_BOT_TOKEN=your_telegram_bot_token \
+TELEGRAM_CHAT_ID=your_chat_id \
+go run ./cmd/recommend -obsidian
+```
+
+The Obsidian mode writes to:
+
+```text
+/Users/janeshirley/Documents/Obsidian Vault/GitHub Projects/<repo>/<repo>.md
+```
+
+For example, `gin-gonic/gin` becomes:
+
+```text
+/Users/janeshirley/Documents/Obsidian Vault/GitHub Projects/gin/gin.md
+```
+
+Telegram receives a reminder with:
+
+- the project name;
+- the GitHub link;
+- the Obsidian relative path;
+- an `obsidian://open` deep link.
+
+Use a local scheduler such as Codex Automation, cron, or launchd to run Obsidian mode at 11:00 on your machine. GitHub-hosted Actions cannot write to your local Obsidian vault.
+
+Preview without secrets or file writes:
+
+```bash
+go run ./cmd/recommend -dry-run -obsidian
+```
 
 ## Configuration
 

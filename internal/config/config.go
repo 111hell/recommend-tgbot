@@ -12,6 +12,9 @@ import (
 type Config struct {
 	Recommend RecommendConfig `yaml:"recommend"`
 	Telegram  TelegramConfig  `yaml:"telegram"`
+	Obsidian  ObsidianConfig  `yaml:"obsidian"`
+	Analysis  AnalysisConfig  `yaml:"analysis"`
+	LLM       LLMConfig       `yaml:"llm"`
 }
 
 type RecommendConfig struct {
@@ -24,6 +27,23 @@ type RecommendConfig struct {
 
 type TelegramConfig struct {
 	ParseMode string `yaml:"parse_mode"`
+}
+
+type ObsidianConfig struct {
+	VaultPath  string `yaml:"vault_path"`
+	ProjectDir string `yaml:"project_dir"`
+}
+
+type AnalysisConfig struct {
+	Provider     string `yaml:"provider"`
+	ScheduleTime string `yaml:"schedule_time"`
+}
+
+type LLMConfig struct {
+	Provider  string `yaml:"provider"`
+	BaseURL   string `yaml:"base_url"`
+	Model     string `yaml:"model"`
+	APIKeyEnv string `yaml:"api_key_env"`
 }
 
 type Env struct {
@@ -84,6 +104,18 @@ func defaultConfig() Config {
 		Telegram: TelegramConfig{
 			ParseMode: "Markdown",
 		},
+		Obsidian: ObsidianConfig{
+			VaultPath:  "/Users/janeshirley/Documents/Obsidian Vault",
+			ProjectDir: "GitHub Projects",
+		},
+		Analysis: AnalysisConfig{
+			Provider:     "template",
+			ScheduleTime: "11:00",
+		},
+		LLM: LLMConfig{
+			Provider:  "openai_compatible",
+			APIKeyEnv: "LLM_API_KEY",
+		},
 	}
 }
 
@@ -103,5 +135,23 @@ func applyDefaults(cfg *Config) {
 	}
 	if strings.TrimSpace(cfg.Telegram.ParseMode) == "" {
 		cfg.Telegram.ParseMode = defaults.Telegram.ParseMode
+	}
+	if strings.TrimSpace(cfg.Obsidian.VaultPath) == "" {
+		cfg.Obsidian.VaultPath = defaults.Obsidian.VaultPath
+	}
+	if strings.TrimSpace(cfg.Obsidian.ProjectDir) == "" {
+		cfg.Obsidian.ProjectDir = defaults.Obsidian.ProjectDir
+	}
+	if strings.TrimSpace(cfg.Analysis.Provider) == "" {
+		cfg.Analysis.Provider = defaults.Analysis.Provider
+	}
+	if strings.TrimSpace(cfg.Analysis.ScheduleTime) == "" {
+		cfg.Analysis.ScheduleTime = defaults.Analysis.ScheduleTime
+	}
+	if strings.TrimSpace(cfg.LLM.Provider) == "" {
+		cfg.LLM.Provider = defaults.LLM.Provider
+	}
+	if strings.TrimSpace(cfg.LLM.APIKeyEnv) == "" {
+		cfg.LLM.APIKeyEnv = defaults.LLM.APIKeyEnv
 	}
 }
