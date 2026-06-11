@@ -14,6 +14,7 @@ import (
 type Writer struct {
 	VaultPath  string
 	ProjectDir string
+	Overwrite  bool
 }
 
 type WriteResult struct {
@@ -51,7 +52,9 @@ func (w Writer) WritePlan(plan learning.Plan) (WriteResult, error) {
 
 	if _, err := os.Stat(absolutePath); err == nil {
 		result.AlreadyExists = true
-		return result, nil
+		if !w.Overwrite {
+			return result, nil
+		}
 	} else if !os.IsNotExist(err) {
 		return WriteResult{}, fmt.Errorf("check obsidian note: %w", err)
 	}

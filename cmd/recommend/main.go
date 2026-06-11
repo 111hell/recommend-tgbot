@@ -30,6 +30,7 @@ func run() error {
 	configPath := flag.String("config", "config.yaml", "path to config yaml")
 	dryRun := flag.Bool("dry-run", false, "print message without sending to Telegram or saving history")
 	obsidianMode := flag.Bool("obsidian", false, "write a two-day learning route to Obsidian")
+	regenerate := flag.Bool("regenerate", false, "regenerate the active Obsidian learning route and overwrite its note")
 	flag.Parse()
 
 	cfg, err := config.Load(*configPath)
@@ -47,6 +48,9 @@ func run() error {
 	history, err := recommend.LoadHistory(historyPath)
 	if err != nil {
 		return err
+	}
+	if *obsidianMode && *regenerate {
+		return runObsidianMode(cfg, env, nil, history, *dryRun, *regenerate)
 	}
 
 	var candidates []recommend.Repository
@@ -68,7 +72,7 @@ func run() error {
 	})
 
 	if *obsidianMode {
-		return runObsidianMode(cfg, env, recommendations, history, *dryRun)
+		return runObsidianMode(cfg, env, recommendations, history, *dryRun, *regenerate)
 	}
 
 	message := recommend.FormatMessage(recommendations)
@@ -91,11 +95,15 @@ func run() error {
 	return nil
 }
 
-func runObsidianMode(cfg config.Config, env config.Env, recommendations []recommend.Recommendation, history recommend.History, dryRun bool) error {
+func runObsidianMode(cfg config.Config, env config.Env, recommendations []recommend.Recommendation, history recommend.History, dryRun bool, regenerate bool) error {
 	now := nowInShanghai()
 	state, err := learning.LoadState(learningStatePath)
 	if err != nil {
 		return err
+	}
+
+	if regenerate {
+		return regenerateActiveRoute(cfg, env, state, dryRun, now)
 	}
 
 	if !state.NeedsNewProject(now) {
@@ -133,7 +141,7 @@ func runObsidianMode(cfg config.Config, env config.Env, recommendations []recomm
 	}
 
 	plan, analysisErr := buildPlan(context.Background(), cfg, recommendations[0])
-	writer := obsidian.Writer{VaultPath: cfg.Obsidian.VaultPath, ProjectDir: cfg.Obsidian.ProjectDir}
+	writer := obsidian.Writer{VaultPath: cfg.Obsidian.VaultPath, ProjectDir: cfg.Obsidian.ProjectDir, Overwrite: true}
 	var result obsidian.WriteResult
 	if dryRun {
 		relativePath := cfg.Obsidian.ProjectDir + "/" + plan.Slug + "/" + plan.Slug + ".md"
@@ -178,6 +186,68 @@ func runObsidianMode(cfg config.Config, env config.Env, recommendations []recomm
 		ParseMode: cfg.Telegram.ParseMode,
 		Buttons:   reminderButtons(plan, result),
 	})
+}
+
+func regenerateActiveRoute(cfg config.Config, env config.Env, state learning.State, dryRun bool, now time.Time) error {
+	if state.Active == nil {
+		return fmt.Errorf("no active learning route to regenerate")
+	}
+
+	route := state.Active
+	rec := recommendationForRoute(route)
+	plan, analysisErr := buildPlan(context.Background(), cfg, rec)
+	writer := obsidian.Writer{VaultPath: cfg.Obsidian.VaultPath, ProjectDir: cfg.Obsidian.ProjectDir, Overwrite: true}
+	day := state.CurrentRouteDay(now)
+	if day <= 0 {
+		day = route.CurrentDay
+	}
+	if day <= 0 {
+		day = 1
+	}
+
+	if dryRun {
+		relativePath := route.ObsidianPath
+		if strings.TrimSpace(relativePath) == "" {
+			relativePath = cfg.Obsidian.ProjectDir + "/" + plan.Slug + "/" + plan.Slug + ".md"
+		}
+		result := obsidian.WriteResult{
+			RelativePath: relativePath,
+			DeepLink:     obsidian.DeepLinkForPath(joinPath(cfg.Obsidian.VaultPath, relativePath)),
+		}
+		fmt.Print(obsidian.RenderMarkdown(plan))
+		if analysisErr != nil {
+			fmt.Fprintf(os.Stderr, "analysis fallback: %v\n", analysisErr)
+		}
+		fmt.Print("\n--- Telegram Reminder ---\n")
+		fmt.Print(buildLearningReminder(plan, result, day))
+		return nil
+	}
+
+	result, err := writer.WritePlan(plan)
+	if err != nil {
+		return err
+	}
+	if analysisErr != nil {
+		fmt.Fprintf(os.Stderr, "analysis fallback: %v\n", analysisErr)
+	}
+
+	message := buildLearningReminder(plan, result, day)
+	telegramClient := telegram.NewClient(env.TelegramBotToken)
+	return telegramClient.SendMessageWithOptions(context.Background(), env.TelegramChatID, message, telegram.SendOptions{
+		ParseMode: cfg.Telegram.ParseMode,
+		Buttons:   reminderButtons(plan, result),
+	})
+}
+
+func recommendationForRoute(route *learning.Route) recommend.Recommendation {
+	fullName := strings.TrimSpace(route.FullName)
+	return recommend.Recommendation{
+		Repository: recommend.Repository{
+			FullName: fullName,
+			Name:     strings.TrimSpace(route.Slug),
+			HTMLURL:  "https://github.com/" + fullName,
+		},
+	}
 }
 
 func buildPlan(ctx context.Context, cfg config.Config, rec recommend.Recommendation) (learning.Plan, error) {
