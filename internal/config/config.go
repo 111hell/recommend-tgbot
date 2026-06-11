@@ -75,9 +75,6 @@ func LoadEnv(dryRun bool) (Env, error) {
 	}
 
 	var missing []string
-	if !dryRun && env.GitHubToken == "" {
-		missing = append(missing, "GITHUB_TOKEN")
-	}
 	if !dryRun {
 		if env.TelegramBotToken == "" {
 			missing = append(missing, "TELEGRAM_BOT_TOKEN")
