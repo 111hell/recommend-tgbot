@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"strings"
 	"time"
 
 	"recommend-bot/internal/config"
@@ -107,7 +108,7 @@ func runObsidianMode(cfg config.Config, env config.Env, recommendations []recomm
 		}
 		result := obsidian.WriteResult{
 			RelativePath: route.ObsidianPath,
-			DeepLink:     obsidian.DeepLink(filepathBase(cfg.Obsidian.VaultPath), route.ObsidianPath),
+			DeepLink:     obsidian.DeepLinkForPath(joinPath(cfg.Obsidian.VaultPath, route.ObsidianPath)),
 		}
 		message := buildLearningReminder(plan, result, day)
 		if dryRun {
@@ -138,7 +139,7 @@ func runObsidianMode(cfg config.Config, env config.Env, recommendations []recomm
 		relativePath := cfg.Obsidian.ProjectDir + "/" + plan.Slug + "/" + plan.Slug + ".md"
 		result = obsidian.WriteResult{
 			RelativePath: relativePath,
-			DeepLink:     obsidian.DeepLink(filepathBase(cfg.Obsidian.VaultPath), relativePath),
+			DeepLink:     obsidian.DeepLinkForPath(joinPath(cfg.Obsidian.VaultPath, relativePath)),
 		}
 		fmt.Print(obsidian.RenderMarkdown(plan))
 		fmt.Print("\n--- Telegram Reminder ---\n")
@@ -205,21 +206,20 @@ func reminderButtons(plan learning.Plan, result obsidian.WriteResult) []telegram
 	return buttons
 }
 
-func filepathBase(path string) string {
-	for len(path) > 1 && path[len(path)-1] == '/' {
-		path = path[:len(path)-1]
+func joinPath(base string, relative string) string {
+	for strings.HasSuffix(base, "/") {
+		base = strings.TrimSuffix(base, "/")
 	}
-	idx := -1
-	for i := len(path) - 1; i >= 0; i-- {
-		if path[i] == '/' {
-			idx = i
-			break
-		}
+	for strings.HasPrefix(relative, "/") {
+		relative = strings.TrimPrefix(relative, "/")
 	}
-	if idx >= 0 {
-		return path[idx+1:]
+	if base == "" {
+		return relative
 	}
-	return path
+	if relative == "" {
+		return base
+	}
+	return base + "/" + relative
 }
 
 func sampleCandidates() []recommend.Repository {

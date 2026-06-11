@@ -46,7 +46,7 @@ func (w Writer) WritePlan(plan learning.Plan) (WriteResult, error) {
 	result := WriteResult{
 		RelativePath: relativePath,
 		AbsolutePath: absolutePath,
-		DeepLink:     DeepLink(filepath.Base(w.VaultPath), relativePath),
+		DeepLink:     DeepLinkForPath(absolutePath),
 	}
 
 	if _, err := os.Stat(absolutePath); err == nil {
@@ -106,7 +106,15 @@ func RenderMarkdown(plan learning.Plan) string {
 }
 
 func DeepLink(vaultName string, relativePath string) string {
-	return "obsidian://open?vault=" + url.QueryEscape(vaultName) + "&file=" + url.QueryEscape(filepath.ToSlash(relativePath))
+	return "obsidian://open?vault=" + queryEscape(vaultName) + "&file=" + queryEscape(filepath.ToSlash(relativePath))
+}
+
+func DeepLinkForPath(path string) string {
+	return "obsidian://open?path=" + queryEscape(filepath.ToSlash(path))
+}
+
+func queryEscape(value string) string {
+	return strings.ReplaceAll(url.QueryEscape(value), "+", "%20")
 }
 
 func writeSection(b *strings.Builder, title string, items []string) {
