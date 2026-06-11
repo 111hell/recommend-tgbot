@@ -183,6 +183,15 @@
         "go",
         "ai_agent"
       ]
+    },
+    {
+      "full_name": "go-gitea/gitea",
+      "recommended_at": "2026-06-11",
+      "score": 812.1279051189157,
+      "categories": [
+        "go",
+        "devops_infra"
+      ]
     }
   ]
 }
