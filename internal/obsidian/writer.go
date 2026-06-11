@@ -66,6 +66,10 @@ func (w Writer) WritePlan(plan learning.Plan) (WriteResult, error) {
 }
 
 func RenderMarkdown(plan learning.Plan) string {
+	if strings.TrimSpace(plan.Markdown) != "" {
+		return strings.TrimSpace(plan.Markdown) + "\n"
+	}
+
 	var b strings.Builder
 	title := strings.TrimSpace(plan.FullName)
 	if title == "" {

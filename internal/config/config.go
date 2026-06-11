@@ -106,7 +106,7 @@ func defaultConfig() Config {
 			ProjectDir: "GitHub Projects",
 		},
 		Analysis: AnalysisConfig{
-			Provider:     "template",
+			Provider:     "codex",
 			ScheduleTime: "11:00",
 		},
 		LLM: LLMConfig{

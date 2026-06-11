@@ -132,7 +132,7 @@ func runObsidianMode(cfg config.Config, env config.Env, recommendations []recomm
 		return telegramClient.SendMessage(context.Background(), env.TelegramChatID, message, cfg.Telegram.ParseMode)
 	}
 
-	plan := learning.BuildTemplatePlan(recommendations[0])
+	plan, analysisErr := buildPlan(context.Background(), cfg, recommendations[0])
 	writer := obsidian.Writer{VaultPath: cfg.Obsidian.VaultPath, ProjectDir: cfg.Obsidian.ProjectDir}
 	var result obsidian.WriteResult
 	if dryRun {
@@ -142,6 +142,9 @@ func runObsidianMode(cfg config.Config, env config.Env, recommendations []recomm
 			DeepLink:     obsidian.DeepLinkForPath(joinPath(cfg.Obsidian.VaultPath, relativePath)),
 		}
 		fmt.Print(obsidian.RenderMarkdown(plan))
+		if analysisErr != nil {
+			fmt.Fprintf(os.Stderr, "analysis fallback: %v\n", analysisErr)
+		}
 		fmt.Print("\n--- Telegram Reminder ---\n")
 		fmt.Print(buildLearningReminder(plan, result, 1))
 		return nil
@@ -175,6 +178,19 @@ func runObsidianMode(cfg config.Config, env config.Env, recommendations []recomm
 		ParseMode: cfg.Telegram.ParseMode,
 		Buttons:   reminderButtons(plan, result),
 	})
+}
+
+func buildPlan(ctx context.Context, cfg config.Config, rec recommend.Recommendation) (learning.Plan, error) {
+	switch strings.ToLower(strings.TrimSpace(cfg.Analysis.Provider)) {
+	case "codex":
+		plan, err := learning.BuildCodexPlan(ctx, rec, learning.CodexOptions{})
+		if err != nil {
+			return learning.BuildTemplatePlan(rec), err
+		}
+		return plan, nil
+	default:
+		return learning.BuildTemplatePlan(rec), nil
+	}
 }
 
 func nowInShanghai() time.Time {

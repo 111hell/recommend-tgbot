@@ -13,7 +13,7 @@ obsidian:
   vault_path: "/Users/janeshirley/Documents/Obsidian Vault"
   project_dir: "GitHub Projects"
 analysis:
-  provider: template
+  provider: codex
   schedule_time: "11:00"
 llm:
   provider: openai_compatible

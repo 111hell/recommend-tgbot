@@ -14,6 +14,7 @@ type Plan struct {
 	GitHubURL       string
 	Language        string
 	Categories      []recommend.Category
+	Markdown        string
 	WhyLearn        string
 	Highlights      []string
 	HardParts       []string
