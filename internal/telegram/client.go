@@ -5,7 +5,9 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
+	"net/url"
 	"strings"
 	"time"
 )
@@ -56,11 +58,11 @@ func (c *Client) SendMessageWithOptions(ctx context.Context, chatID string, text
 		row := make([]inlineKeyboardButton, 0, len(options.Buttons))
 		for _, button := range options.Buttons {
 			text := strings.TrimSpace(button.Text)
-			url := strings.TrimSpace(button.URL)
-			if text == "" || url == "" {
+			buttonURL := strings.TrimSpace(button.URL)
+			if text == "" || !isAllowedButtonURL(buttonURL) {
 				continue
 			}
-			row = append(row, inlineKeyboardButton{Text: text, URL: url})
+			row = append(row, inlineKeyboardButton{Text: text, URL: buttonURL})
 		}
 		if len(row) > 0 {
 			payload.ReplyMarkup = &inlineKeyboardMarkup{InlineKeyboard: [][]inlineKeyboardButton{row}}
@@ -85,9 +87,27 @@ func (c *Client) SendMessageWithOptions(ctx context.Context, chatID string, text
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		body, _ := io.ReadAll(io.LimitReader(resp.Body, 4096))
+		message := strings.TrimSpace(string(body))
+		if message != "" {
+			return fmt.Errorf("telegram sendMessage failed: %s: %s", resp.Status, message)
+		}
 		return fmt.Errorf("telegram sendMessage failed: %s", resp.Status)
 	}
 	return nil
+}
+
+func isAllowedButtonURL(rawURL string) bool {
+	parsed, err := url.Parse(strings.TrimSpace(rawURL))
+	if err != nil {
+		return false
+	}
+	switch parsed.Scheme {
+	case "http", "https", "tg":
+		return true
+	default:
+		return false
+	}
 }
 
 type sendMessageRequest struct {

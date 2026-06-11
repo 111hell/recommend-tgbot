@@ -199,9 +199,6 @@ func buildLearningReminder(plan learning.Plan, result obsidian.WriteResult, day 
 
 func reminderButtons(plan learning.Plan, result obsidian.WriteResult) []telegram.Button {
 	buttons := []telegram.Button{}
-	if result.DeepLink != "" {
-		buttons = append(buttons, telegram.Button{Text: "打开 Obsidian", URL: result.DeepLink})
-	}
 	if plan.GitHubURL != "" {
 		buttons = append(buttons, telegram.Button{Text: "打开 GitHub", URL: plan.GitHubURL})
 	}
