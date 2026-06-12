@@ -192,6 +192,14 @@
         "go",
         "devops_infra"
       ]
+    },
+    {
+      "full_name": "firecrawl/firecrawl",
+      "recommended_at": "2026-06-12",
+      "score": 812.0600336326754,
+      "categories": [
+        "ai_agent"
+      ]
     }
   ]
 }
