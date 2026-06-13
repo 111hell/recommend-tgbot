@@ -200,6 +200,16 @@
       "categories": [
         "ai_agent"
       ]
+    },
+    {
+      "full_name": "seaweedfs/seaweedfs",
+      "recommended_at": "2026-06-13",
+      "score": 808.9675336044136,
+      "categories": [
+        "go",
+        "ai_agent",
+        "devops_infra"
+      ]
     }
   ]
 }
