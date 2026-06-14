@@ -210,6 +210,14 @@
         "ai_agent",
         "devops_infra"
       ]
+    },
+    {
+      "full_name": "gin-gonic/gin",
+      "recommended_at": "2026-06-14",
+      "score": 805.9901666815078,
+      "categories": [
+        "go"
+      ]
     }
   ]
 }
