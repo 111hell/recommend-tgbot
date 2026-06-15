@@ -218,6 +218,14 @@
       "categories": [
         "go"
       ]
+    },
+    {
+      "full_name": "gohugoio/hugo",
+      "recommended_at": "2026-06-15",
+      "score": 805.5580275380564,
+      "categories": [
+        "go"
+      ]
     }
   ]
 }
