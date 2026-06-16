@@ -226,6 +226,15 @@
       "categories": [
         "go"
       ]
+    },
+    {
+      "full_name": "safishamsi/graphify",
+      "recommended_at": "2026-06-16",
+      "score": 805.4705763740801,
+      "categories": [
+        "ai_agent",
+        "devops_infra"
+      ]
     }
   ]
 }
