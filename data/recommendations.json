@@ -235,6 +235,15 @@
         "ai_agent",
         "devops_infra"
       ]
+    },
+    {
+      "full_name": "mudler/LocalAI",
+      "recommended_at": "2026-06-17",
+      "score": 804.22232533404,
+      "categories": [
+        "go",
+        "ai_agent"
+      ]
     }
   ]
 }
