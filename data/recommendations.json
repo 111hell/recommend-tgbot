@@ -244,6 +244,14 @@
         "go",
         "ai_agent"
       ]
+    },
+    {
+      "full_name": "moby/moby",
+      "recommended_at": "2026-06-18",
+      "score": 802.6717022147637,
+      "categories": [
+        "go"
+      ]
     }
   ]
 }
