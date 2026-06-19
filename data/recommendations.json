@@ -252,6 +252,14 @@
       "categories": [
         "go"
       ]
+    },
+    {
+      "full_name": "browser-use/browser-use",
+      "recommended_at": "2026-06-19",
+      "score": 801.7231631796473,
+      "categories": [
+        "ai_agent"
+      ]
     }
   ]
 }
