@@ -292,6 +292,15 @@
       "categories": [
         "ai_agent"
       ]
+    },
+    {
+      "full_name": "infiniflow/ragflow",
+      "recommended_at": "2026-06-24",
+      "score": 839.1308777866135,
+      "categories": [
+        "go",
+        "ai_agent"
+      ]
     }
   ]
 }
