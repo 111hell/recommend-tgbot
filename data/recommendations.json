@@ -301,6 +301,14 @@
         "go",
         "ai_agent"
       ]
+    },
+    {
+      "full_name": "vllm-project/vllm",
+      "recommended_at": "2026-06-25",
+      "score": 798.1981304946282,
+      "categories": [
+        "ai_agent"
+      ]
     }
   ]
 }
