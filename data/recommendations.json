@@ -309,6 +309,15 @@
       "categories": [
         "ai_agent"
       ]
+    },
+    {
+      "full_name": "milvus-io/milvus",
+      "recommended_at": "2026-06-26",
+      "score": 797.0581030686061,
+      "categories": [
+        "go",
+        "ai_agent"
+      ]
     }
   ]
 }
