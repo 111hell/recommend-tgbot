@@ -327,6 +327,14 @@
         "go",
         "ai_agent"
       ]
+    },
+    {
+      "full_name": "lobehub/lobehub",
+      "recommended_at": "2026-06-28",
+      "score": 793.6565758359626,
+      "categories": [
+        "ai_agent"
+      ]
     }
   ]
 }
