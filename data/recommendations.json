@@ -335,6 +335,15 @@
       "categories": [
         "ai_agent"
       ]
+    },
+    {
+      "full_name": "nektos/act",
+      "recommended_at": "2026-06-29",
+      "score": 792.4234272806384,
+      "categories": [
+        "go",
+        "devops_infra"
+      ]
     }
   ]
 }
