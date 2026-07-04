@@ -344,6 +344,14 @@
         "go",
         "devops_infra"
       ]
+    },
+    {
+      "full_name": "practical-tutorials/project-based-learning",
+      "recommended_at": "2026-07-04",
+      "score": 858.7225688043212,
+      "categories": [
+        "go"
+      ]
     }
   ]
 }
