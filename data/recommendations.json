@@ -352,6 +352,15 @@
       "categories": [
         "go"
       ]
+    },
+    {
+      "full_name": "Graphify-Labs/graphify",
+      "recommended_at": "2026-07-05",
+      "score": 812.9574148503351,
+      "categories": [
+        "ai_agent",
+        "devops_infra"
+      ]
     }
   ]
 }
