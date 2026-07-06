@@ -361,6 +361,15 @@
         "ai_agent",
         "devops_infra"
       ]
+    },
+    {
+      "full_name": "AlistGo/alist",
+      "recommended_at": "2026-07-06",
+      "score": 807.7257891083345,
+      "categories": [
+        "go",
+        "ai_agent"
+      ]
     }
   ]
 }
