@@ -370,6 +370,15 @@
         "go",
         "ai_agent"
       ]
+    },
+    {
+      "full_name": "koala73/worldmonitor",
+      "recommended_at": "2026-07-07",
+      "score": 807.42065270815,
+      "categories": [
+        "ai_agent",
+        "devops_infra"
+      ]
     }
   ]
 }
