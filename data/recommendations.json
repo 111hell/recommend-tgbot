@@ -379,6 +379,14 @@
         "ai_agent",
         "devops_infra"
       ]
+    },
+    {
+      "full_name": "rasbt/LLMs-from-scratch",
+      "recommended_at": "2026-07-11",
+      "score": 804.1148598120226,
+      "categories": [
+        "ai_agent"
+      ]
     }
   ]
 }
