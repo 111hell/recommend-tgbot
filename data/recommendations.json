@@ -387,6 +387,16 @@
       "categories": [
         "ai_agent"
       ]
+    },
+    {
+      "full_name": "SigNoz/signoz",
+      "recommended_at": "2026-07-14",
+      "score": 801.1651026795417,
+      "categories": [
+        "go",
+        "ai_agent",
+        "devops_infra"
+      ]
     }
   ]
 }
