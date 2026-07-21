@@ -405,6 +405,14 @@
       "categories": [
         "ai_agent"
       ]
+    },
+    {
+      "full_name": "caddyserver/caddy",
+      "recommended_at": "2026-07-21",
+      "score": 792.4622062445757,
+      "categories": [
+        "go"
+      ]
     }
   ]
 }
