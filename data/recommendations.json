@@ -413,6 +413,15 @@
       "categories": [
         "go"
       ]
+    },
+    {
+      "full_name": "ollama/ollama",
+      "recommended_at": "2026-07-24",
+      "score": 879.8796847321019,
+      "categories": [
+        "go",
+        "ai_agent"
+      ]
     }
   ]
 }
