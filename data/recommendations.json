@@ -422,6 +422,15 @@
         "go",
         "ai_agent"
       ]
+    },
+    {
+      "full_name": "kubernetes/kubernetes",
+      "recommended_at": "2026-07-25",
+      "score": 866.0487098127506,
+      "categories": [
+        "go",
+        "devops_infra"
+      ]
     }
   ]
 }
