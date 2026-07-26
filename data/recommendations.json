@@ -431,6 +431,14 @@
         "go",
         "devops_infra"
       ]
+    },
+    {
+      "full_name": "affaan-m/ECC",
+      "recommended_at": "2026-07-26",
+      "score": 852.5676204726333,
+      "categories": [
+        "ai_agent"
+      ]
     }
   ]
 }
