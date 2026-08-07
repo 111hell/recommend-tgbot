@@ -529,6 +529,14 @@
         "ai_agent",
         "devops_infra"
       ]
+    },
+    {
+      "full_name": "langchain-ai/langchain",
+      "recommended_at": "2026-08-07",
+      "score": 825.8811430456748,
+      "categories": [
+        "ai_agent"
+      ]
     }
   ]
 }
