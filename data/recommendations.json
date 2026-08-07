@@ -519,6 +519,16 @@
       "categories": [
         "ai_agent"
       ]
+    },
+    {
+      "full_name": "netdata/netdata",
+      "recommended_at": "2026-08-07",
+      "score": 863.7259568892536,
+      "categories": [
+        "go",
+        "ai_agent",
+        "devops_infra"
+      ]
     }
   ]
 }
